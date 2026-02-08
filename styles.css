@@ -1,0 +1,371 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 100%;
+    padding: 1rem;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.header h1 {
+    color: white;
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.exit-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.exit-btn:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Writing Area */
+.writing-area {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+#textArea {
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+    font-size: 1.8rem;
+    font-family: 'Comic Sans MS', cursive;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    resize: none;
+    -webkit-user-select: text;
+    user-select: text;
+    line-height: 1.6;
+}
+
+#textArea:focus {
+    outline: 4px solid #FFD93D;
+}
+
+#textArea::placeholder {
+    color: #ccc;
+}
+
+/* Emoji Picker */
+.emoji-picker {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+}
+
+.emoji-btn {
+    background: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 2rem;
+    padding: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.emoji-btn:active {
+    transform: scale(1.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Action Buttons */
+.actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.action-btn {
+    padding: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.new-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.list-btn {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Saved List */
+.saved-list {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    padding: 2rem;
+}
+
+.saved-list.hidden {
+    display: none;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.list-header h2 {
+    color: white;
+    font-size: 2rem;
+}
+
+.close-list-btn {
+    background: #ff4757;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+}
+
+.list-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.text-item {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.text-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.text-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.text-preview {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.text-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.load-btn, .delete-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.load-btn {
+    background: #4facfe;
+    color: white;
+}
+
+.delete-btn {
+    background: #ff4757;
+    color: white;
+}
+
+/* PIN Modal */
+.pin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.pin-modal.hidden {
+    display: none;
+}
+
+.pin-content {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+}
+
+.pin-content h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.pin-content p {
+    margin-bottom: 2rem;
+    color: #666;
+    font-size: 1.2rem;
+}
+
+.pin-input {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.pin-digit {
+    width: 60px;
+    height: 80px;
+    font-size: 2.5rem;
+    text-align: center;
+    border: 3px solid #ddd;
+    border-radius: 10px;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.pin-digit:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.pin-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.pin-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background: #95a5a6;
+    color: white;
+}
+
+.confirm-btn {
+    background: #667eea;
+    color: white;
+}
+
+.pin-error {
+    margin-top: 1rem;
+    color: #ff4757;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.pin-error.hidden {
+    display: none;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    #textArea {
+        font-size: 1.5rem;
+    }
+    
+    .emoji-picker {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .emoji-btn {
+        font-size: 1.5rem;
+        padding: 0.6rem;
+    }
+    
+    .action-btn {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+}

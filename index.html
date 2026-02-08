@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF6B9D">
+    <title>SafeWrite - Schreib-Spaß!</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Header -->
+        <div class="header">
+            <h1>✨ SafeWrite ✨</h1>
+            <button class="exit-btn" id="exitBtn">🔒</button>
+        </div>
+
+        <!-- Main Writing Area -->
+        <div class="writing-area">
+            <textarea 
+                id="textArea" 
+                placeholder="Schreib hier deine Geschichte... 🌈"
+                autofocus
+            ></textarea>
+        </div>
+
+        <!-- Emoji Picker -->
+        <div class="emoji-picker">
+            <button class="emoji-btn">😊</button>
+            <button class="emoji-btn">❤️</button>
+            <button class="emoji-btn">🌈</button>
+            <button class="emoji-btn">⭐</button>
+            <button class="emoji-btn">🎉</button>
+            <button class="emoji-btn">🌸</button>
+            <button class="emoji-btn">🦄</button>
+            <button class="emoji-btn">🚀</button>
+            <button class="emoji-btn">🎨</button>
+            <button class="emoji-btn">🌟</button>
+            <button class="emoji-btn">🐱</button>
+            <button class="emoji-btn">🐶</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button class="action-btn save-btn" id="saveBtn">💾 Speichern</button>
+            <button class="action-btn new-btn" id="newBtn">📝 Neu</button>
+            <button class="action-btn list-btn" id="listBtn">📚 Meine Texte</button>
+        </div>
+
+        <!-- Saved Texts List (hidden by default) -->
+        <div class="saved-list hidden" id="savedList">
+            <div class="list-header">
+                <h2>Meine Texte 📚</h2>
+                <button class="close-list-btn" id="closeListBtn">✖️</button>
+            </div>
+            <div class="list-content" id="listContent">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- PIN Modal (hidden by default) -->
+        <div class="pin-modal hidden" id="pinModal">
+            <div class="pin-content">
+                <h2>🔒 PIN eingeben</h2>
+                <p>Gib die 4-stellige PIN ein, um SafeWrite zu verlassen</p>
+                <div class="pin-input">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin1">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin2">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin3">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin4">
+                </div>
+                <div class="pin-buttons">
+                    <button class="pin-btn cancel-btn" id="cancelPin">Abbrechen</button>
+                    <button class="pin-btn confirm-btn" id="confirmPin">Bestätigen</button>
+                </div>
+                <p class="pin-error hidden" id="pinError">❌ Falsche PIN!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

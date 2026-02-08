@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeWrite - PWA Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        h1 { color: #667eea; }
+        .test-section {
+            background: white;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .pass { background: #38ef7d; color: white; }
+        .fail { background: #ff4757; color: white; }
+        .pending { background: #ffd93d; color: #333; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        button:hover { background: #5568d3; }
+        pre {
+            background: #333;
+            color: #0f0;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 SafeWrite PWA Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>1. Service Worker Test</h2>
+        <button onclick="testServiceWorker()">Test Service Worker</button>
+        <div id="sw-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. localStorage Test</h2>
+        <button onclick="testLocalStorage()">Test localStorage</button>
+        <div id="ls-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Offline Support Test</h2>
+        <button onclick="testOffline()">Test Offline Mode</button>
+        <div id="offline-result"></div>
+        <p><small>Schalte dein Internet aus und klicke den Button erneut!</small></p>
+    </div>
+
+    <div class="test-section">
+        <h2>4. PWA Manifest Test</h2>
+        <button onclick="testManifest()">Test Manifest</button>
+        <div id="manifest-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Fullscreen API Test</h2>
+        <button onclick="testFullscreen()">Test Fullscreen</button>
+        <div id="fullscreen-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Test Summary</h2>
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        let results = {
+            sw: null,
+            ls: null,
+            offline: null,
+            manifest: null,
+            fullscreen: null
+        };
+
+        function showResult(element, pass, message) {
+            const className = pass ? 'pass' : 'fail';
+            element.innerHTML = `<div class="test-result ${className}">${pass ? '✅ PASS' : '❌ FAIL'}</div><p>${message}</p>`;
+            updateSummary();
+        }
+
+        async function testServiceWorker() {
+            const el = document.getElementById('sw-result');
+            
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        results.sw = true;
+                        showResult(el, true, `Service Worker aktiv: ${registration.active ? 'Running' : 'Installing'}`);
+                    } else {
+                        results.sw = false;
+                        showResult(el, false, 'Service Worker nicht registriert. Öffne index.html!');
+                    }
+                } catch (err) {
+                    results.sw = false;
+                    showResult(el, false, `Fehler: ${err.message}`);
+                }
+            } else {
+                results.sw = false;
+                showResult(el, false, 'Service Worker API nicht unterstützt!');
+            }
+        }
+
+        function testLocalStorage() {
+            const el = document.getElementById('ls-result');
+            
+            try {
+                const testKey = 'safewrite_test';
+                const testValue = 'Hello SafeWrite!';
+                
+                localStorage.setItem(testKey, testValue);
+                const retrieved = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+                
+                if (retrieved === testValue) {
+                    results.ls = true;
+                    showResult(el, true, 'localStorage funktioniert einwandfrei!');
+                } else {
+                    results.ls = false;
+                    showResult(el, false, 'localStorage Wert stimmt nicht überein!');
+                }
+            } catch (err) {
+                results.ls = false;
+                showResult(el, false, `localStorage Fehler: ${err.message}`);
+            }
+        }
+
+        async function testOffline() {
+            const el = document.getElementById('offline-result');
+            
+            if (!navigator.onLine) {
+                results.offline = true;
+                showResult(el, true, '🔌 Offline-Modus aktiv! App sollte funktionieren.');
+            } else {
+                // Try to fetch a resource
+                try {
+                    const response = await fetch('./manifest.json', { cache: 'no-cache' });
+                    if (response.ok) {
+                        results.offline = true;
+                        showResult(el, true, '🌐 Online - Schalte Internet aus um Offline zu testen!');
+                    }
+                } catch (err) {
+                    results.offline = false;
+                    showResult(el, false, `Netzwerk-Fehler: ${err.message}`);
+                }
+            }
+        }
+
+        async function testManifest() {
+            const el = document.getElementById('manifest-result');
+            
+            try {
+                const response = await fetch('./manifest.json');
+                const manifest = await response.json();
+                
+                const required = ['name', 'short_name', 'start_url', 'display', 'icons'];
+                const missing = required.filter(key => !manifest[key]);
+                
+                if (missing.length === 0) {
+                    results.manifest = true;
+                    showResult(el, true, `Manifest gültig! Name: ${manifest.name}`);
+                } else {
+                    results.manifest = false;
+                    showResult(el, false, `Fehlende Manifest-Felder: ${missing.join(', ')}`);
+                }
+            } catch (err) {
+                results.manifest = false;
+                showResult(el, false, `Manifest-Fehler: ${err.message}`);
+            }
+        }
+
+        function testFullscreen() {
+            const el = document.getElementById('fullscreen-result');
+            
+            if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+                results.fullscreen = true;
+                showResult(el, true, 'Fullscreen API verfügbar!');
+                
+                // Try to enter fullscreen
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(() => {});
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                }
+            } else {
+                results.fullscreen = false;
+                showResult(el, false, 'Fullscreen API nicht unterstützt!');
+            }
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            const total = Object.keys(results).length;
+            const tested = Object.values(results).filter(r => r !== null).length;
+            const passed = Object.values(results).filter(r => r === true).length;
+            
+            summary.innerHTML = `
+                <h3>Results: ${passed}/${tested} Tests bestanden</h3>
+                <p>Service Worker: ${results.sw === null ? '⏳' : results.sw ? '✅' : '❌'}</p>
+                <p>localStorage: ${results.ls === null ? '⏳' : results.ls ? '✅' : '❌'}</p>
+                <p>Offline: ${results.offline === null ? '⏳' : results.offline ? '✅' : '❌'}</p>
+                <p>Manifest: ${results.manifest === null ? '⏳' : results.manifest ? '✅' : '❌'}</p>
+                <p>Fullscreen: ${results.fullscreen === null ? '⏳' : results.fullscreen ? '✅' : '❌'}</p>
+            `;
+        }
+
+        // Initial summary
+        updateSummary();
+    </script>
+</body>
+</html>
