@@ -213,6 +213,28 @@ function speak(text, fast = false) {
     }, fast ? 10 : 50);
 }
 
+// Visual feedback when emoji is clicked
+function showEmojiName(name) {
+    // Create popup element
+    const popup = document.createElement('div');
+    popup.className = 'emoji-name-popup';
+    popup.textContent = name;
+    
+    // Add to body
+    document.body.appendChild(popup);
+    
+    // Trigger animation (add after DOM insertion)
+    setTimeout(() => {
+        popup.classList.add('show');
+    }, 10);
+    
+    // Remove after 1 second
+    setTimeout(() => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300); // Wait for fade out
+    }, 1000);
+}
+
 function speakCharacter(char) {
     // Ignore whitespace and special chars
     if (char === ' ' || char === '\n' || char === '\t') {
@@ -275,6 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add TTS AFTER the main click handler (bubble phase)
             btn.addEventListener('click', (e) => {
                 console.log(`🎯 Clicked: ${name}`);
+                // Show visual feedback
+                showEmojiName(name);
                 // Small delay so emoji is inserted first
                 setTimeout(() => speak(name), 50);
             }, false); // Use bubble phase (runs AFTER app.js handlers)
