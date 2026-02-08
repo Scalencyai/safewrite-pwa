@@ -7,14 +7,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+import android.webkit.WebSettings;
+import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.androidbrowserhelper.trusted.TwaLauncher;
 
 public class MainActivity extends AppCompatActivity {
     
-    private static final String TWA_URL = "https://your-domain.com";
-    // For local testing: "http://10.0.2.2:8080" (Android emulator)
-    // or "http://YOUR_LOCAL_IP:8080" (physical device)
+    private static final String PWA_URL = "http://10.40.1.107:8080";
     
     private WebView webView;
     private boolean isKioskMode = false;
@@ -29,14 +28,34 @@ public class MainActivity extends AppCompatActivity {
         // Fullscreen
         setupFullscreen();
         
-        // Launch TWA
-        TwaLauncher twaLauncher = new TwaLauncher(this);
-        twaLauncher.launch(
-            getTwaBuilder()
-                .setUrl(TWA_URL)
-                .build(),
-            null
-        );
+        // Create WebView
+        webView = new WebView(this);
+        setContentView(webView);
+        
+        // Configure WebView
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
+        
+        // Add JavaScript interface for Kiosk control
+        webView.addJavascriptInterface(new KioskInterface(), "AndroidKiosk");
+        
+        // Load PWA
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl(PWA_URL);
+        
+        // Auto-start Lock Task Mode after 2 seconds
+        webView.postDelayed(() -> {
+            try {
+                startLockTask();
+                isKioskMode = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 2000);
     }
 
     private void setupFullscreen() {
@@ -54,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         public void startLockTask() {
             runOnUiThread(() -> {
                 try {
-                    startLockTask();
+                    MainActivity.this.startLockTask();
                     isKioskMode = true;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -67,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 try {
                     if (isKioskMode) {
-                        stopLockTask();
+                        MainActivity.this.stopLockTask();
                         isKioskMode = false;
                     }
                 } catch (Exception e) {
@@ -86,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Disable back button in kiosk mode
-        if (!isKioskMode) {
+        if (webView.canGoBack() && !isKioskMode) {
+            webView.goBack();
+        } else if (!isKioskMode) {
             super.onBackPressed();
         }
     }
@@ -103,10 +124,5 @@ public class MainActivity extends AppCompatActivity {
         if (hasFocus) {
             setupFullscreen();
         }
-    }
-
-    private TwaLauncher.Builder getTwaBuilder() {
-        return new TwaLauncher.Builder(this)
-            .setLaunchMode(TwaLauncher.CCT_LAUNCH_MODE_TRUSTED_WEB_ACTIVITY);
     }
 }
