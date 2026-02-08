@@ -1,6 +1,6 @@
 // SafeWrite Service Worker - Offline Support
 
-const CACHE_NAME = 'safewrite-v3-20260208';
+const CACHE_NAME = 'safewrite-v4-20260208-1713';
 const urlsToCache = [
     './',
     './index.html',
