@@ -153,7 +153,14 @@ class SafeWriteApp {
         
         const newPosition = start + emojiWithSpaces.length;
         this.textArea.selectionStart = this.textArea.selectionEnd = newPosition;
-        this.textArea.focus();
+        
+        // Don't focus textarea - prevents keyboard from appearing
+        // this.textArea.focus();
+        
+        // Blur any active element to hide keyboard
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
         
         // Trigger auto-save
         this.onTextChange();
