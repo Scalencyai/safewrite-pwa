@@ -152,11 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Emoji ${index}: "${emoji}" = "${name}"`);
         
         if (name) {
+            // Add TTS AFTER the main click handler (bubble phase)
             btn.addEventListener('click', (e) => {
-                e.stopPropagation();
                 console.log(`🎯 Clicked: ${name}`);
-                speak(name);
-            }, true); // Use capture phase
+                // Small delay so emoji is inserted first
+                setTimeout(() => speak(name), 50);
+            }, false); // Use bubble phase (runs AFTER app.js handlers)
         }
     });
     
