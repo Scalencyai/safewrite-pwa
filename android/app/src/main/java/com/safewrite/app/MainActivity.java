@@ -13,10 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     
-    private static final String PWA_URL = "http://10.40.1.107:8082";
+    private static final String PWA_URL = "https://scalencyai.github.io/safewrite-pwa/";
     
     private WebView webView;
     private boolean isKioskMode = false;
+    private AudioHelper audioHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         
         // Fullscreen
         setupFullscreen();
+        
+        // Initialize Audio Helper
+        audioHelper = new AudioHelper(this);
         
         // Create WebView
         webView = new WebView(this);
@@ -43,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         
         // Add JavaScript interface for Kiosk control
         webView.addJavascriptInterface(new KioskInterface(), "AndroidKiosk");
+        
+        // Add JavaScript interface for Audio
+        webView.addJavascriptInterface(new AudioInterface(), "AndroidAudio");
         
         // Load PWA
         webView.setWebViewClient(new WebViewClient());
@@ -124,6 +131,30 @@ public class MainActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             setupFullscreen();
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (audioHelper != null) {
+            audioHelper.shutdown();
+        }
+    }
+    
+    // JavaScript Interface for Audio (Native TTS)
+    public class AudioInterface {
+        
+        @JavascriptInterface
+        public void speak(String text) {
+            if (audioHelper != null) {
+                audioHelper.speak(text);
+            }
+        }
+        
+        @JavascriptInterface
+        public boolean isAvailable() {
+            return audioHelper != null;
         }
     }
 }

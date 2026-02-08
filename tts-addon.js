@@ -28,6 +28,14 @@ const buttonNames = {
 function speak(text, fast = false) {
     console.log('🔊 Speaking:', text);
     
+    // Try native Android TTS first
+    if (window.AndroidAudio && window.AndroidAudio.isAvailable()) {
+        console.log('✅ Using native Android TTS');
+        window.AndroidAudio.speak(text);
+        return;
+    }
+    
+    // Fallback to Web Speech API
     if (!('speechSynthesis' in window)) {
         console.error('Speech Synthesis not supported');
         return;
