@@ -1,9 +1,11 @@
-// SafeWrite App - Main JavaScript
+// SafeWrite App - Kinderfreundliche Version
 
 class SafeWriteApp {
     constructor() {
         this.currentTextId = null;
         this.PIN = '1234'; // Default PIN (can be changed)
+        this.autoSaveTimer = null;
+        this.lastSaved = null;
         this.init();
     }
 
@@ -11,7 +13,7 @@ class SafeWriteApp {
         this.loadPIN();
         this.setupElements();
         this.setupEventListeners();
-        this.autoSave();
+        this.startAutoSave();
         this.preventNavigation();
         this.registerServiceWorker();
         this.requestKioskMode();
@@ -37,61 +39,146 @@ class SafeWriteApp {
         this.confirmPin = document.getElementById('confirmPin');
         this.pinError = document.getElementById('pinError');
         this.emojiButtons = document.querySelectorAll('.emoji-btn');
+        
+        // Create save indicator
+        this.createSaveIndicator();
+    }
+
+    createSaveIndicator() {
+        const indicator = document.createElement('div');
+        indicator.className = 'save-indicator';
+        indicator.id = 'saveIndicator';
+        indicator.textContent = '💾 Gespeichert!';
+        document.querySelector('.writing-area').appendChild(indicator);
+        this.saveIndicator = indicator;
     }
 
     setupEventListeners() {
-        // Emoji buttons
+        // Emoji buttons with smooth animation
         this.emojiButtons.forEach(btn => {
-            btn.addEventListener('click', () => this.insertEmoji(btn.textContent));
+            btn.addEventListener('click', (e) => {
+                this.insertEmojiSmooth(btn.textContent);
+                this.animateButton(btn);
+            });
         });
 
         // Action buttons
-        this.saveBtn.addEventListener('click', () => this.saveText());
-        this.newBtn.addEventListener('click', () => this.newText());
-        this.listBtn.addEventListener('click', () => this.showSavedList());
+        this.saveBtn.addEventListener('click', () => {
+            this.saveText(true);
+            this.animateButton(this.saveBtn);
+        });
+        
+        this.newBtn.addEventListener('click', () => {
+            this.newText();
+            this.animateButton(this.newBtn);
+        });
+        
+        this.listBtn.addEventListener('click', () => {
+            this.showSavedList();
+            this.animateButton(this.listBtn);
+        });
+        
         this.closeListBtn.addEventListener('click', () => this.closeSavedList());
 
         // Exit button (PIN lock)
-        this.exitBtn.addEventListener('click', () => this.showPinModal());
+        this.exitBtn.addEventListener('click', () => {
+            this.showPinModal();
+            this.animateButton(this.exitBtn);
+        });
 
         // PIN modal
         this.cancelPin.addEventListener('click', () => this.hidePinModal());
         this.confirmPin.addEventListener('click', () => this.verifyPin());
 
-        // PIN input auto-focus
+        // PIN input auto-focus and navigation
         this.pinInputs.forEach((input, index) => {
             input.addEventListener('input', () => {
                 if (input.value.length === 1 && index < 3) {
                     this.pinInputs[index + 1].focus();
                 }
             });
+            
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && input.value === '' && index > 0) {
                     this.pinInputs[index - 1].focus();
                 }
+                if (e.key === 'Enter') {
+                    this.verifyPin();
+                }
             });
+        });
+
+        // Textarea change detection for auto-save
+        this.textArea.addEventListener('input', () => {
+            this.onTextChange();
+        });
+
+        // Click outside modal to close
+        this.savedList.addEventListener('click', (e) => {
+            if (e.target === this.savedList) {
+                this.closeSavedList();
+            }
         });
 
         // Prevent accidental exit
         window.addEventListener('beforeunload', (e) => {
-            e.preventDefault();
-            e.returnValue = '';
+            if (this.textArea.value.trim() && !this.lastSaved) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
         });
     }
 
-    insertEmoji(emoji) {
+    animateButton(button) {
+        button.style.animation = 'none';
+        setTimeout(() => {
+            button.style.animation = '';
+        }, 10);
+    }
+
+    insertEmojiSmooth(emoji) {
         const start = this.textArea.selectionStart;
         const end = this.textArea.selectionEnd;
         const text = this.textArea.value;
-        this.textArea.value = text.substring(0, start) + emoji + text.substring(end);
-        this.textArea.selectionStart = this.textArea.selectionEnd = start + emoji.length;
+        
+        // Insert emoji with space if needed
+        const beforeText = text.substring(0, start);
+        const afterText = text.substring(end);
+        const needsSpaceBefore = beforeText.length > 0 && !beforeText.endsWith(' ');
+        const needsSpaceAfter = afterText.length > 0 && !afterText.startsWith(' ');
+        
+        const emojiWithSpaces = (needsSpaceBefore ? ' ' : '') + emoji + (needsSpaceAfter ? ' ' : '');
+        
+        this.textArea.value = beforeText + emojiWithSpaces + afterText;
+        
+        const newPosition = start + emojiWithSpaces.length;
+        this.textArea.selectionStart = this.textArea.selectionEnd = newPosition;
         this.textArea.focus();
+        
+        // Trigger auto-save
+        this.onTextChange();
     }
 
-    saveText() {
+    onTextChange() {
+        // Clear existing timer
+        if (this.autoSaveTimer) {
+            clearTimeout(this.autoSaveTimer);
+        }
+        
+        // Set new timer for auto-save (3 seconds after last change)
+        this.autoSaveTimer = setTimeout(() => {
+            if (this.textArea.value.trim()) {
+                this.saveText(false);
+            }
+        }, 3000);
+    }
+
+    saveText(showNotification = true) {
         const text = this.textArea.value.trim();
         if (!text) {
-            this.showNotification('📝 Schreib erst etwas!');
+            if (showNotification) {
+                this.showNotification('📝 Schreib erst etwas!');
+            }
             return;
         }
 
@@ -111,16 +198,43 @@ class SafeWriteApp {
 
         localStorage.setItem('safewrite_texts', JSON.stringify(texts));
         this.currentTextId = textData.id;
-        this.showNotification('💾 Gespeichert!');
+        this.lastSaved = Date.now();
+        
+        // Show save indicator
+        this.showSaveIndicator();
+        
+        if (showNotification) {
+            this.showNotification('💾 Gespeichert!');
+        }
+    }
+
+    showSaveIndicator() {
+        this.saveIndicator.classList.add('show');
+        setTimeout(() => {
+            this.saveIndicator.classList.remove('show');
+        }, 2000);
     }
 
     newText() {
-        if (this.textArea.value.trim() && !confirm('Neuen Text starten? (Aktueller Text wird nicht gespeichert, wenn du ihn nicht gespeichert hast)')) {
-            return;
+        // Check if there's unsaved content
+        const currentText = this.textArea.value.trim();
+        
+        if (currentText) {
+            // Create a custom confirmation dialog
+            if (confirm('🆕 Neuen Text starten?\n\nDein aktueller Text wird nicht gelöscht, wenn du ihn gespeichert hast!')) {
+                this.textArea.value = '';
+                this.currentTextId = null;
+                this.lastSaved = null;
+                this.textArea.focus();
+                this.showNotification('📝 Neuer Text!');
+            }
+        } else {
+            // If empty, just clear and focus
+            this.textArea.value = '';
+            this.currentTextId = null;
+            this.lastSaved = null;
+            this.textArea.focus();
         }
-        this.textArea.value = '';
-        this.currentTextId = null;
-        this.textArea.focus();
     }
 
     showSavedList() {
@@ -151,7 +265,7 @@ class SafeWriteApp {
             minute: '2-digit'
         });
 
-        const preview = textData.text.substring(0, 150) + (textData.text.length > 150 ? '...' : '');
+        const preview = textData.text.substring(0, 100) + (textData.text.length > 100 ? '...' : '');
 
         item.innerHTML = `
             <div class="text-item-header">
@@ -164,8 +278,15 @@ class SafeWriteApp {
             </div>
         `;
 
-        item.querySelector('.load-btn').addEventListener('click', () => this.loadText(textData.id));
-        item.querySelector('.delete-btn').addEventListener('click', () => this.deleteText(textData.id));
+        item.querySelector('.load-btn').addEventListener('click', (e) => {
+            this.loadText(textData.id);
+            this.animateButton(e.target);
+        });
+        
+        item.querySelector('.delete-btn').addEventListener('click', (e) => {
+            this.deleteText(textData.id);
+            this.animateButton(e.target);
+        });
 
         return item;
     }
@@ -176,17 +297,29 @@ class SafeWriteApp {
         if (textData) {
             this.textArea.value = textData.text;
             this.currentTextId = id;
+            this.lastSaved = Date.now();
             this.closeSavedList();
             this.textArea.focus();
+            this.showNotification('📖 Text geladen!');
         }
     }
 
     deleteText(id) {
-        if (!confirm('Text wirklich löschen? 🗑️')) return;
+        if (!confirm('🗑️ Text wirklich löschen?\n\nDieser Schritt kann nicht rückgängig gemacht werden!')) {
+            return;
+        }
 
         const texts = this.getSavedTexts();
         const filtered = texts.filter(t => t.id !== id);
         localStorage.setItem('safewrite_texts', JSON.stringify(filtered));
+        
+        // If deleted text is currently open, clear it
+        if (this.currentTextId === id) {
+            this.textArea.value = '';
+            this.currentTextId = null;
+            this.lastSaved = null;
+        }
+        
         this.showSavedList(); // Refresh list
         this.showNotification('🗑️ Gelöscht!');
     }
@@ -203,7 +336,9 @@ class SafeWriteApp {
     // PIN Lock System
     showPinModal() {
         this.pinModal.classList.remove('hidden');
-        this.pinInputs[0].focus();
+        setTimeout(() => {
+            this.pinInputs[0].focus();
+        }, 100);
         this.clearPinInputs();
         this.pinError.classList.add('hidden');
     }
@@ -220,16 +355,28 @@ class SafeWriteApp {
     verifyPin() {
         const enteredPin = this.pinInputs.map(input => input.value).join('');
         
+        if (enteredPin.length !== 4) {
+            this.pinError.textContent = '❌ Bitte alle 4 Ziffern eingeben!';
+            this.pinError.classList.remove('hidden');
+            return;
+        }
+        
         if (enteredPin === this.PIN) {
             this.pinError.classList.add('hidden');
-            // Successful PIN - allow exit
-            alert('✅ PIN korrekt! Du kannst jetzt SafeWrite verlassen.');
+            this.showNotification('✅ PIN korrekt! Tschüss! 👋');
             this.hidePinModal();
+            
             // In production, this would trigger screen unpinning
             if (window.Android && window.Android.stopLockTask) {
                 window.Android.stopLockTask();
             }
+            
+            // Optional: redirect or close
+            setTimeout(() => {
+                // window.location.href = 'about:blank';
+            }, 1500);
         } else {
+            this.pinError.textContent = '❌ Falsche PIN! Versuch es nochmal.';
             this.pinError.classList.remove('hidden');
             this.clearPinInputs();
             this.pinInputs[0].focus();
@@ -243,11 +390,17 @@ class SafeWriteApp {
         }
     }
 
-    // Auto-save every 30 seconds
-    autoSave() {
+    // Auto-save every 30 seconds if there's content
+    startAutoSave() {
         setInterval(() => {
-            if (this.textArea.value.trim() && this.currentTextId) {
-                this.saveText();
+            const text = this.textArea.value.trim();
+            if (text && this.currentTextId) {
+                // Only auto-save if text has changed since last save
+                const texts = this.getSavedTexts();
+                const currentSaved = texts.find(t => t.id === this.currentTextId);
+                if (!currentSaved || currentSaved.text !== text) {
+                    this.saveText(false);
+                }
             }
         }, 30000);
     }
@@ -260,11 +413,16 @@ class SafeWriteApp {
             history.pushState(null, null, location.href);
         });
 
-        // Prevent context menu
+        // Prevent context menu on non-textarea elements
         document.addEventListener('contextmenu', (e) => {
             if (e.target !== this.textArea) {
                 e.preventDefault();
             }
+        });
+        
+        // Prevent text selection on buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('selectstart', (e) => e.preventDefault());
         });
     }
 
@@ -310,17 +468,19 @@ class SafeWriteApp {
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8AA0 100%);
             color: white;
             padding: 1rem 2rem;
-            border-radius: 10px;
-            font-size: 1.2rem;
+            border-radius: 20px;
+            font-size: 1.3rem;
             z-index: 9999;
-            animation: fadeInOut 2s;
+            animation: slideDown 0.3s ease, fadeOut 0.3s ease 2.7s;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+            font-weight: bold;
         `;
         toast.textContent = message;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
+        setTimeout(() => toast.remove(), 3000);
     }
 
     escapeHtml(text) {
@@ -334,14 +494,28 @@ class SafeWriteApp {
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new SafeWriteApp();
+    console.log('SafeWrite geladen! 🎨');
 });
 
-// Add fadeInOut animation
+// Add animations
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes fadeInOut {
-        0%, 100% { opacity: 0; }
-        10%, 90% { opacity: 1; }
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -20px);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+    
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            transform: translate(-50%, -10px);
+        }
     }
 `;
 document.head.appendChild(style);

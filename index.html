@@ -9,13 +9,14 @@
     <link rel="stylesheet" href="styles.css">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SafeWrite">
 </head>
 <body>
     <div class="container" id="app">
         <!-- Header -->
         <div class="header">
             <h1>✨ SafeWrite ✨</h1>
-            <button class="exit-btn" id="exitBtn">🔒</button>
+            <button class="exit-btn" id="exitBtn" aria-label="App verlassen">🔒</button>
         </div>
 
         <!-- Main Writing Area -->
@@ -24,59 +25,76 @@
                 id="textArea" 
                 placeholder="Schreib hier deine Geschichte... 🌈"
                 autofocus
+                aria-label="Text eingeben"
             ></textarea>
+            <!-- Save indicator will be added by JS -->
         </div>
 
         <!-- Emoji Picker -->
-        <div class="emoji-picker">
-            <button class="emoji-btn">😊</button>
-            <button class="emoji-btn">❤️</button>
-            <button class="emoji-btn">🌈</button>
-            <button class="emoji-btn">⭐</button>
-            <button class="emoji-btn">🎉</button>
-            <button class="emoji-btn">🌸</button>
-            <button class="emoji-btn">🦄</button>
-            <button class="emoji-btn">🚀</button>
-            <button class="emoji-btn">🎨</button>
-            <button class="emoji-btn">🌟</button>
-            <button class="emoji-btn">🐱</button>
-            <button class="emoji-btn">🐶</button>
+        <div class="emoji-picker" role="toolbar" aria-label="Emoji auswählen">
+            <button class="emoji-btn" aria-label="Lächelndes Gesicht">😊</button>
+            <button class="emoji-btn" aria-label="Herz">❤️</button>
+            <button class="emoji-btn" aria-label="Regenbogen">🌈</button>
+            <button class="emoji-btn" aria-label="Stern">⭐</button>
+            <button class="emoji-btn" aria-label="Party">🎉</button>
+            <button class="emoji-btn" aria-label="Blume">🌸</button>
+            <button class="emoji-btn" aria-label="Einhorn">🦄</button>
+            <button class="emoji-btn" aria-label="Rakete">🚀</button>
+            <button class="emoji-btn" aria-label="Kunst">🎨</button>
+            <button class="emoji-btn" aria-label="Glitzer-Stern">🌟</button>
+            <button class="emoji-btn" aria-label="Katze">🐱</button>
+            <button class="emoji-btn" aria-label="Hund">🐶</button>
+            <button class="emoji-btn" aria-label="Panda">🐼</button>
+            <button class="emoji-btn" aria-label="Fisch">🐠</button>
+            <button class="emoji-btn" aria-label="Schmetterling">🦋</button>
         </div>
 
         <!-- Action Buttons -->
         <div class="actions">
-            <button class="action-btn save-btn" id="saveBtn">💾 Speichern</button>
-            <button class="action-btn new-btn" id="newBtn">📝 Neu</button>
-            <button class="action-btn list-btn" id="listBtn">📚 Meine Texte</button>
+            <button class="action-btn save-btn" id="saveBtn" aria-label="Text speichern">
+                💾 Speichern
+            </button>
+            <button class="action-btn new-btn" id="newBtn" aria-label="Neuer Text">
+                📝 Neu
+            </button>
+            <button class="action-btn list-btn" id="listBtn" aria-label="Gespeicherte Texte anzeigen">
+                📚 Meine Texte
+            </button>
         </div>
 
         <!-- Saved Texts List (hidden by default) -->
-        <div class="saved-list hidden" id="savedList">
-            <div class="list-header">
-                <h2>Meine Texte 📚</h2>
-                <button class="close-list-btn" id="closeListBtn">✖️</button>
-            </div>
-            <div class="list-content" id="listContent">
-                <!-- Dynamically populated -->
+        <div class="saved-list hidden" id="savedList" role="dialog" aria-labelledby="listTitle">
+            <div class="list-wrapper">
+                <div class="list-header">
+                    <h2 id="listTitle">Meine Texte 📚</h2>
+                    <button class="close-list-btn" id="closeListBtn" aria-label="Liste schließen">✖️</button>
+                </div>
+                <div class="list-content" id="listContent">
+                    <!-- Dynamically populated -->
+                </div>
             </div>
         </div>
 
         <!-- PIN Modal (hidden by default) -->
-        <div class="pin-modal hidden" id="pinModal">
+        <div class="pin-modal hidden" id="pinModal" role="dialog" aria-labelledby="pinTitle">
             <div class="pin-content">
-                <h2>🔒 PIN eingeben</h2>
+                <h2 id="pinTitle">🔒 PIN eingeben</h2>
                 <p>Gib die 4-stellige PIN ein, um SafeWrite zu verlassen</p>
-                <div class="pin-input">
-                    <input type="password" maxlength="1" class="pin-digit" id="pin1">
-                    <input type="password" maxlength="1" class="pin-digit" id="pin2">
-                    <input type="password" maxlength="1" class="pin-digit" id="pin3">
-                    <input type="password" maxlength="1" class="pin-digit" id="pin4">
+                <div class="pin-input" role="group" aria-label="PIN Eingabe">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin1" 
+                           inputmode="numeric" pattern="[0-9]" aria-label="PIN Ziffer 1">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin2" 
+                           inputmode="numeric" pattern="[0-9]" aria-label="PIN Ziffer 2">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin3" 
+                           inputmode="numeric" pattern="[0-9]" aria-label="PIN Ziffer 3">
+                    <input type="password" maxlength="1" class="pin-digit" id="pin4" 
+                           inputmode="numeric" pattern="[0-9]" aria-label="PIN Ziffer 4">
                 </div>
                 <div class="pin-buttons">
                     <button class="pin-btn cancel-btn" id="cancelPin">Abbrechen</button>
                     <button class="pin-btn confirm-btn" id="confirmPin">Bestätigen</button>
                 </div>
-                <p class="pin-error hidden" id="pinError">❌ Falsche PIN!</p>
+                <p class="pin-error hidden" id="pinError" role="alert" aria-live="polite">❌ Falsche PIN!</p>
             </div>
         </div>
     </div>
