@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     
-    private static final String PWA_URL = "http://10.40.1.107:8080";
+    private static final String PWA_URL = "http://10.40.1.107:8082";
     
     private WebView webView;
     private boolean isKioskMode = false;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
+        settings.setMediaPlaybackRequiresUserGesture(false); // Allow autoplay audio
         
         // Add JavaScript interface for Kiosk control
         webView.addJavascriptInterface(new KioskInterface(), "AndroidKiosk");
