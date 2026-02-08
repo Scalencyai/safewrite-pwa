@@ -1,0 +1,9 @@
+Version: v3
+Build: 2026-02-08 17:05
+Features:
+- 55+ Emojis
+- Native TTS Audio
+- Date & Time on save
+- localStorage working
+- Kiosk Mode
+- Emoji insertion fix
