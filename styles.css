@@ -23,10 +23,9 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background: linear-gradient(135deg, #FFE5EC 0%, #FFF0F5 50%, #E0F4FF 100%);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .container {
@@ -38,13 +37,14 @@ body {
     width: 100%;
     backdrop-filter: blur(10px);
     border: 3px solid rgba(255, 255, 255, 0.8);
+    margin: 0 auto;
 }
 
 /* Header */
 .header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 15px;
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 2px dashed rgba(255, 182, 193, 0.3);
@@ -52,9 +52,10 @@ body {
 
 h1 {
     color: #FF6B9D;
-    font-size: 2.2rem;
+    font-size: 2rem;
     text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.1);
     animation: float 3s ease-in-out infinite;
+    text-align: center;
 }
 
 @keyframes float {
@@ -62,27 +63,41 @@ h1 {
     50% { transform: translateY(-5px); }
 }
 
-.exit-btn {
+/* Header Navigation */
+.header-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+.nav-btn {
     background: linear-gradient(135deg, #FFB6C1 0%, #FFA0B4 100%);
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 15px;
     border-radius: 15px;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(255, 107, 157, 0.2);
-    min-width: 50px;
-    min-height: 50px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.exit-btn:hover {
+.nav-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
 }
 
-.exit-btn:active {
+.nav-btn:active {
     transform: translateY(-1px);
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, #FF6B9D 0%, #FF4081 100%);
 }
 
 /* Writing Area */
@@ -138,38 +153,16 @@ h1 {
     opacity: 1;
 }
 
-/* Emoji Picker */
+/* Emoji Picker - alle Emojis anzeigen, kein Scroll-Container */
 .emoji-picker {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(55px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 10px;
     margin-bottom: 20px;
     padding: 15px;
     background: linear-gradient(135deg, #FFF0F5 0%, #E0F4FF 100%);
     border-radius: 20px;
     border: 2px solid rgba(255, 182, 193, 0.2);
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Scrollbar für Emoji-Picker */
-.emoji-picker::-webkit-scrollbar {
-    width: 10px;
-}
-
-.emoji-picker::-webkit-scrollbar-track {
-    background: rgba(255, 182, 193, 0.1);
-    border-radius: 10px;
-}
-
-.emoji-picker::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #FFB6C1 0%, #FF6B9D 100%);
-    border-radius: 10px;
-}
-
-.emoji-picker::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #FF6B9D 0%, #FF4081 100%);
 }
 
 .emoji-btn {
