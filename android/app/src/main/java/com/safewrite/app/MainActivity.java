@@ -9,6 +9,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import android.webkit.PermissionRequest;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     
     private WebView webView;
     private boolean isKioskMode = false;
-    private AudioHelper audioHelper;
+    private SimpleTTS simpleTTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
         // Fullscreen
         setupFullscreen();
         
-        // Initialize Audio Helper
-        audioHelper = new AudioHelper(this);
+        // Initialize Simple TTS
+        simpleTTS = new SimpleTTS(this);
         
         // Create WebView
         webView = new WebView(this);
@@ -43,16 +45,39 @@ public class MainActivity extends AppCompatActivity {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
-        settings.setMediaPlaybackRequiresUserGesture(false); // Allow autoplay audio
+        settings.setMediaPlaybackRequiresUserGesture(false);
         
-        // Add JavaScript interface for Kiosk control
+        // Enable localStorage properly
+        String databasePath = this.getApplicationContext().getDir("database", Context.MODE_PRIVATE).getPath();
+        settings.setDatabasePath(databasePath);
+        
+        // Add JavaScript interfaces BEFORE loading URL
         webView.addJavascriptInterface(new KioskInterface(), "AndroidKiosk");
-        
-        // Add JavaScript interface for Audio
         webView.addJavascriptInterface(new AudioInterface(), "AndroidAudio");
         
+        // Set WebViewClient
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                view.evaluateJavascript(
+                    "console.log('AndroidAudio available:', typeof AndroidAudio !== 'undefined');",
+                    null
+                );
+            }
+        });
+        
+        // Set WebChromeClient for media permissions
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(final PermissionRequest request) {
+                runOnUiThread(() -> {
+                    request.grant(request.getResources());
+                });
+            }
+        });
+        
         // Load PWA
-        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(PWA_URL);
         
         // Auto-start Lock Task Mode after 2 seconds
@@ -112,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Disable back button in kiosk mode
         if (webView.canGoBack() && !isKioskMode) {
             webView.goBack();
         } else if (!isKioskMode) {
@@ -137,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (audioHelper != null) {
-            audioHelper.shutdown();
+        if (simpleTTS != null) {
+            simpleTTS.shutdown();
         }
     }
     
@@ -147,14 +171,19 @@ public class MainActivity extends AppCompatActivity {
         
         @JavascriptInterface
         public void speak(String text) {
-            if (audioHelper != null) {
-                audioHelper.speak(text);
+            android.util.Log.d("AudioInterface", "speak() called with: " + text);
+            if (simpleTTS != null) {
+                simpleTTS.speak(text);
+            } else {
+                android.util.Log.e("AudioInterface", "simpleTTS is null!");
             }
         }
         
         @JavascriptInterface
         public boolean isAvailable() {
-            return audioHelper != null;
+            boolean available = simpleTTS != null && simpleTTS.isReady();
+            android.util.Log.d("AudioInterface", "isAvailable: " + available);
+            return available;
         }
     }
 }
