@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 20px;
+            font-size: 1.5rem;
+            margin: 10px;
+            width: calc(100% - 20px);
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔊 Audio Test</h1>
+    
+    <button onclick="testNative()">Test Native Android TTS</button>
+    <button onclick="testWeb()">Test Web Speech API</button>
+    <button onclick="testChar()">Test Character "A"</button>
+    
+    <h2>Log:</h2>
+    <div class="log" id="log"></div>
+    
+    <script>
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        }
+        
+        function testNative() {
+            log('🔍 Testing Native Android TTS...');
+            
+            if (window.AndroidAudio) {
+                log('✅ AndroidAudio found!');
+                log('isAvailable: ' + window.AndroidAudio.isAvailable());
+                
+                try {
+                    window.AndroidAudio.speak('Hallo Test');
+                    log('✅ speak() called');
+                } catch (e) {
+                    log('❌ Error: ' + e.message);
+                }
+            } else {
+                log('❌ AndroidAudio not found!');
+                log('Available: ' + Object.keys(window).filter(k => k.includes('Android')).join(', '));
+            }
+        }
+        
+        function testWeb() {
+            log('🔍 Testing Web Speech API...');
+            
+            if ('speechSynthesis' in window) {
+                log('✅ Web Speech API available');
+                const utterance = new SpeechSynthesisUtterance('Hallo Web Test');
+                utterance.lang = 'de-DE';
+                window.speechSynthesis.speak(utterance);
+                log('✅ speak() called');
+            } else {
+                log('❌ Web Speech API not available');
+            }
+        }
+        
+        function testChar() {
+            log('🔍 Testing character A...');
+            testNative();
+        }
+        
+        // Auto-check on load
+        window.addEventListener('load', () => {
+            log('🚀 Page loaded');
+            log('User Agent: ' + navigator.userAgent);
+            
+            if (window.AndroidAudio) {
+                log('✅ AndroidAudio detected');
+            } else {
+                log('❌ AndroidAudio NOT detected');
+            }
+            
+            if ('speechSynthesis' in window) {
+                log('✅ Web Speech API detected');
+            } else {
+                log('❌ Web Speech API NOT detected');
+            }
+        });
+    </script>
+</body>
+</html>

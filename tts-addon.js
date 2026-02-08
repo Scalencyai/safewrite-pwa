@@ -97,6 +97,14 @@ function initTTS() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 TTS addon loaded');
     
+    // Check Android Audio availability
+    if (window.AndroidAudio) {
+        console.log('✅ AndroidAudio available!');
+        console.log('AndroidAudio.isAvailable():', window.AndroidAudio.isAvailable());
+    } else {
+        console.log('❌ AndroidAudio NOT available - using Web Speech API');
+    }
+    
     // Initialize on first interaction
     document.body.addEventListener('click', initTTS, { once: true });
     
