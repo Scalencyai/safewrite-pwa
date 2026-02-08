@@ -14,10 +14,15 @@
 </head>
 <body>
     <div class="container" id="app">
-        <!-- Header -->
+        <!-- Header with Navigation -->
         <div class="header">
             <h1>✨ SafeWrite ✨</h1>
-            <button class="exit-btn" id="exitBtn" aria-label="App verlassen">🔒</button>
+            <div class="header-nav">
+                <button class="nav-btn" id="saveBtn" aria-label="Text speichern">💾</button>
+                <button class="nav-btn" id="newBtn" aria-label="Neuer Text">📝</button>
+                <button class="nav-btn" id="listBtn" aria-label="Gespeicherte Texte">📚</button>
+                <button class="nav-btn exit-btn" id="exitBtn" aria-label="App verlassen">🔒</button>
+            </div>
         </div>
 
         <!-- Main Writing Area -->
@@ -31,44 +36,62 @@
             <!-- Save indicator will be added by JS -->
         </div>
 
-        <!-- Emoji Picker -->
+        <!-- Emoji Picker (150 beliebteste Emojis) -->
         <div class="emoji-picker" role="toolbar" aria-label="Emoji auswählen">
-            <!-- Gesichter -->
+            <!-- Gesichter & Emotionen (20) -->
             <button class="emoji-btn" aria-label="Lächelndes Gesicht">😊</button>
             <button class="emoji-btn" aria-label="Herz-Augen">😍</button>
             <button class="emoji-btn" aria-label="Lachen">😂</button>
             <button class="emoji-btn" aria-label="Zwinkern">😉</button>
             <button class="emoji-btn" aria-label="Cool">😎</button>
+            <button class="emoji-btn" aria-label="Kussmündchen">😘</button>
+            <button class="emoji-btn" aria-label="Tränen lachen">🤣</button>
+            <button class="emoji-btn" aria-label="Glücklich">😄</button>
+            <button class="emoji-btn" aria-label="Strahlen">😁</button>
+            <button class="emoji-btn" aria-label="Zufrieden">☺️</button>
+            <button class="emoji-btn" aria-label="Lächeln">🙂</button>
+            <button class="emoji-btn" aria-label="Umgedreht">🙃</button>
+            <button class="emoji-btn" aria-label="Verträumt">😌</button>
+            <button class="emoji-btn" aria-label="Sternaugen">🤩</button>
+            <button class="emoji-btn" aria-label="Denken">🤔</button>
+            <button class="emoji-btn" aria-label="Traurig">😢</button>
+            <button class="emoji-btn" aria-label="Weinen">😭</button>
+            <button class="emoji-btn" aria-label="Müde">😴</button>
+            <button class="emoji-btn" aria-label="Schlafen">😪</button>
+            <button class="emoji-btn" aria-label="Erstaunt">😮</button>
             
-            <!-- Herzen -->
-            <button class="emoji-btn" aria-label="Herz">❤️</button>
+            <!-- Herzen & Liebe (12) -->
+            <button class="emoji-btn" aria-label="Rotes Herz">❤️</button>
             <button class="emoji-btn" aria-label="Funkelndes Herz">💖</button>
             <button class="emoji-btn" aria-label="Zwei Herzen">💕</button>
+            <button class="emoji-btn" aria-label="Schlagendes Herz">💓</button>
+            <button class="emoji-btn" aria-label="Wachsendes Herz">💗</button>
+            <button class="emoji-btn" aria-label="Orangenes Herz">🧡</button>
+            <button class="emoji-btn" aria-label="Gelbes Herz">💛</button>
+            <button class="emoji-btn" aria-label="Grünes Herz">💚</button>
+            <button class="emoji-btn" aria-label="Blaues Herz">💙</button>
+            <button class="emoji-btn" aria-label="Lila Herz">💜</button>
+            <button class="emoji-btn" aria-label="Rosa Herz">💗</button>
+            <button class="emoji-btn" aria-label="Kuss">💋</button>
             
-            <!-- Natur -->
-            <button class="emoji-btn" aria-label="Regenbogen">🌈</button>
-            <button class="emoji-btn" aria-label="Sonne">☀️</button>
-            <button class="emoji-btn" aria-label="Blume">🌸</button>
-            <button class="emoji-btn" aria-label="Rose">🌹</button>
-            <button class="emoji-btn" aria-label="Baum">🌳</button>
+            <!-- Hände & Gesten (15) -->
+            <button class="emoji-btn" aria-label="Daumen hoch">👍</button>
+            <button class="emoji-btn" aria-label="Daumen runter">👎</button>
+            <button class="emoji-btn" aria-label="Klatschen">👏</button>
+            <button class="emoji-btn" aria-label="Winken">👋</button>
+            <button class="emoji-btn" aria-label="OK">👌</button>
+            <button class="emoji-btn" aria-label="Victory">✌️</button>
+            <button class="emoji-btn" aria-label="Gekreuzte Finger">🤞</button>
+            <button class="emoji-btn" aria-label="Liebe">🤟</button>
+            <button class="emoji-btn" aria-label="Faust">✊</button>
+            <button class="emoji-btn" aria-label="Faust oben">👊</button>
+            <button class="emoji-btn" aria-label="Zeigefinger hoch">☝️</button>
+            <button class="emoji-btn" aria-label="Nach oben zeigen">👆</button>
+            <button class="emoji-btn" aria-label="Beten">🙏</button>
+            <button class="emoji-btn" aria-label="Händeschütteln">🤝</button>
+            <button class="emoji-btn" aria-label="Schreiben">✍️</button>
             
-            <!-- Sterne & Magie -->
-            <button class="emoji-btn" aria-label="Stern">⭐</button>
-            <button class="emoji-btn" aria-label="Glitzer-Stern">🌟</button>
-            <button class="emoji-btn" aria-label="Funkeln">✨</button>
-            
-            <!-- Party & Spaß -->
-            <button class="emoji-btn" aria-label="Party">🎉</button>
-            <button class="emoji-btn" aria-label="Geschenk">🎁</button>
-            <button class="emoji-btn" aria-label="Ballon">🎈</button>
-            <button class="emoji-btn" aria-label="Kuchen">🎂</button>
-            
-            <!-- Fantasy -->
-            <button class="emoji-btn" aria-label="Einhorn">🦄</button>
-            <button class="emoji-btn" aria-label="Fee">🧚</button>
-            <button class="emoji-btn" aria-label="Krone">👑</button>
-            
-            <!-- Tiere -->
+            <!-- Tiere (25) -->
             <button class="emoji-btn" aria-label="Katze">🐱</button>
             <button class="emoji-btn" aria-label="Hund">🐶</button>
             <button class="emoji-btn" aria-label="Panda">🐼</button>
@@ -76,30 +99,114 @@
             <button class="emoji-btn" aria-label="Löwe">🦁</button>
             <button class="emoji-btn" aria-label="Tiger">🐯</button>
             <button class="emoji-btn" aria-label="Bär">🐻</button>
+            <button class="emoji-btn" aria-label="Fuchs">🦊</button>
+            <button class="emoji-btn" aria-label="Affe">🐵</button>
+            <button class="emoji-btn" aria-label="Frosch">🐸</button>
+            <button class="emoji-btn" aria-label="Schwein">🐷</button>
+            <button class="emoji-btn" aria-label="Kuh">🐮</button>
+            <button class="emoji-btn" aria-label="Pferd">🐴</button>
+            <button class="emoji-btn" aria-label="Einhorn">🦄</button>
+            <button class="emoji-btn" aria-label="Elefant">🐘</button>
+            <button class="emoji-btn" aria-label="Giraffe">🦒</button>
             <button class="emoji-btn" aria-label="Fisch">🐠</button>
             <button class="emoji-btn" aria-label="Delfin">🐬</button>
+            <button class="emoji-btn" aria-label="Wal">🐳</button>
             <button class="emoji-btn" aria-label="Schmetterling">🦋</button>
             <button class="emoji-btn" aria-label="Biene">🐝</button>
+            <button class="emoji-btn" aria-label="Marienkäfer">🐞</button>
             <button class="emoji-btn" aria-label="Vogel">🐦</button>
+            <button class="emoji-btn" aria-label="Pinguin">🐧</button>
+            <button class="emoji-btn" aria-label="Eule">🦉</button>
             
-            <!-- Essen -->
+            <!-- Natur & Wetter (18) -->
+            <button class="emoji-btn" aria-label="Regenbogen">🌈</button>
+            <button class="emoji-btn" aria-label="Sonne">☀️</button>
+            <button class="emoji-btn" aria-label="Mond">🌙</button>
+            <button class="emoji-btn" aria-label="Stern">⭐</button>
+            <button class="emoji-btn" aria-label="Glitzer-Stern">🌟</button>
+            <button class="emoji-btn" aria-label="Funkeln">✨</button>
+            <button class="emoji-btn" aria-label="Blitz">⚡</button>
+            <button class="emoji-btn" aria-label="Feuer">🔥</button>
+            <button class="emoji-btn" aria-label="Blume">🌸</button>
+            <button class="emoji-btn" aria-label="Rose">🌹</button>
+            <button class="emoji-btn" aria-label="Sonnenblume">🌻</button>
+            <button class="emoji-btn" aria-label="Tulpe">🌷</button>
+            <button class="emoji-btn" aria-label="Baum">🌳</button>
+            <button class="emoji-btn" aria-label="Palme">🌴</button>
+            <button class="emoji-btn" aria-label="Kaktus">🌵</button>
+            <button class="emoji-btn" aria-label="Pilz">🍄</button>
+            <button class="emoji-btn" aria-label="Wolke">☁️</button>
+            <button class="emoji-btn" aria-label="Regen">🌧️</button>
+            
+            <!-- Essen & Trinken (20) -->
             <button class="emoji-btn" aria-label="Pizza">🍕</button>
             <button class="emoji-btn" aria-label="Burger">🍔</button>
+            <button class="emoji-btn" aria-label="Pommes">🍟</button>
+            <button class="emoji-btn" aria-label="Hot Dog">🌭</button>
+            <button class="emoji-btn" aria-label="Taco">🌮</button>
+            <button class="emoji-btn" aria-label="Sushi">🍣</button>
             <button class="emoji-btn" aria-label="Eis">🍦</button>
+            <button class="emoji-btn" aria-label="Kuchen">🎂</button>
+            <button class="emoji-btn" aria-label="Cupcake">🧁</button>
+            <button class="emoji-btn" aria-label="Donut">🍩</button>
+            <button class="emoji-btn" aria-label="Keks">🍪</button>
+            <button class="emoji-btn" aria-label="Schokolade">🍫</button>
+            <button class="emoji-btn" aria-label="Süßigkeiten">🍬</button>
             <button class="emoji-btn" aria-label="Erdbeere">🍓</button>
             <button class="emoji-btn" aria-label="Apfel">🍎</button>
+            <button class="emoji-btn" aria-label="Banane">🍌</button>
+            <button class="emoji-btn" aria-label="Wassermelone">🍉</button>
+            <button class="emoji-btn" aria-label="Trauben">🍇</button>
+            <button class="emoji-btn" aria-label="Getränk">🧃</button>
+            <button class="emoji-btn" aria-label="Kakao">☕</button>
             
-            <!-- Sport & Spiel -->
-            <button class="emoji-btn" aria-label="Ball">⚽</button>
+            <!-- Party & Feiern (10) -->
+            <button class="emoji-btn" aria-label="Party">🎉</button>
+            <button class="emoji-btn" aria-label="Geschenk">🎁</button>
+            <button class="emoji-btn" aria-label="Ballon">🎈</button>
+            <button class="emoji-btn" aria-label="Konfetti">🎊</button>
+            <button class="emoji-btn" aria-label="Krone">👑</button>
+            <button class="emoji-btn" aria-label="Fee">🧚</button>
+            <button class="emoji-btn" aria-label="Zauberstab">🪄</button>
+            <button class="emoji-btn" aria-label="Kristallkugel">🔮</button>
+            <button class="emoji-btn" aria-label="Kerze">🕯️</button>
+            <button class="emoji-btn" aria-label="Feuerwerk">🎆</button>
+            
+            <!-- Sport & Aktivitäten (10) -->
+            <button class="emoji-btn" aria-label="Fußball">⚽</button>
             <button class="emoji-btn" aria-label="Basketball">🏀</button>
-            <button class="emoji-btn" aria-label="Rakete">🚀</button>
-            <button class="emoji-btn" aria-label="Flugzeug">✈️</button>
-            <button class="emoji-btn" aria-label="Auto">🚗</button>
+            <button class="emoji-btn" aria-label="Tennis">🎾</button>
+            <button class="emoji-btn" aria-label="Volleyball">🏐</button>
+            <button class="emoji-btn" aria-label="Baseball">⚾</button>
+            <button class="emoji-btn" aria-label="Schwimmen">🏊</button>
+            <button class="emoji-btn" aria-label="Fahrrad">🚴</button>
+            <button class="emoji-btn" aria-label="Skateboard">🛹</button>
+            <button class="emoji-btn" aria-label="Trophäe">🏆</button>
+            <button class="emoji-btn" aria-label="Medaille">🏅</button>
             
-            <!-- Kreativ -->
+            <!-- Fahrzeuge & Transport (10) -->
+            <button class="emoji-btn" aria-label="Auto">🚗</button>
+            <button class="emoji-btn" aria-label="Polizeiauto">🚓</button>
+            <button class="emoji-btn" aria-label="Feuerwehr">🚒</button>
+            <button class="emoji-btn" aria-label="Krankenwagen">🚑</button>
+            <button class="emoji-btn" aria-label="Bus">🚌</button>
+            <button class="emoji-btn" aria-label="Zug">🚂</button>
+            <button class="emoji-btn" aria-label="Flugzeug">✈️</button>
+            <button class="emoji-btn" aria-label="Rakete">🚀</button>
+            <button class="emoji-btn" aria-label="Schiff">🚢</button>
+            <button class="emoji-btn" aria-label="Boot">⛵</button>
+            
+            <!-- Kreativ & Bildung (10) -->
             <button class="emoji-btn" aria-label="Kunst">🎨</button>
             <button class="emoji-btn" aria-label="Musik">🎵</button>
+            <button class="emoji-btn" aria-label="Gitarre">🎸</button>
+            <button class="emoji-btn" aria-label="Mikrofon">🎤</button>
             <button class="emoji-btn" aria-label="Buch">📚</button>
+            <button class="emoji-btn" aria-label="Stift">✏️</button>
+            <button class="emoji-btn" aria-label="Schere">✂️</button>
+            <button class="emoji-btn" aria-label="Kamera">📷</button>
+            <button class="emoji-btn" aria-label="Film">🎬</button>
+            <button class="emoji-btn" aria-label="Glühbirne">💡</button>
         </div>
 
         <!-- Action Buttons -->

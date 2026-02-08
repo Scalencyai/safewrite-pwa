@@ -133,6 +133,28 @@ h1 {
     background: linear-gradient(135deg, #FFF0F5 0%, #E0F4FF 100%);
     border-radius: 20px;
     border: 2px solid rgba(255, 182, 193, 0.2);
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Scrollbar für Emoji-Picker */
+.emoji-picker::-webkit-scrollbar {
+    width: 10px;
+}
+
+.emoji-picker::-webkit-scrollbar-track {
+    background: rgba(255, 182, 193, 0.1);
+    border-radius: 10px;
+}
+
+.emoji-picker::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FFB6C1 0%, #FF6B9D 100%);
+    border-radius: 10px;
+}
+
+.emoji-picker::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF6B9D 0%, #FF4081 100%);
 }
 
 .emoji-btn {
